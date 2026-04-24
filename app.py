@@ -54,31 +54,34 @@ year = st.sidebar.number_input("Год выпуска", min_value=2000, max_valu
 brand = st.sidebar.selectbox("Марка", ["Toyota", "BMW", "Mercedes", "Lada"])
 
 if st.button(" Узнать цену"):
-    try:
-        # 1. Собираем данные как DataFrame (как в predict.py)
-        input_df = pd.DataFrame([{
-            "mileage": mileage,
-            "engine_power": engine_power,
-            "year": year,
-            "brand": brand
-        }])
+    with st.spinner("...Считаем прогноз..."):
 
-        # 2. Препроцессинг
-        processed = preprocessor.transform(input_df)
-        tensor_in = torch.FloatTensor(processed)
+        try:
+            # 1. Собираем данные как DataFrame (как в predict.py)
+            input_df = pd.DataFrame([{
+                "mileage": mileage,
+                "engine_power": engine_power,
+                "year": year,
+                "brand": brand
+            }])
 
-        # 3. Предсказание
-        with torch.no_grad():
-            pred_norm = model(tensor_in)
+            # 2. Препроцессинг
+            processed = preprocessor.transform(input_df)
+            tensor_in = torch.FloatTensor(processed)
 
-        # 4. Денормализация
-        price = price_scaler.inverse_transform(pred_norm.numpy().reshape(-1, 1)).item()
+            # 3. Предсказание
+            
+            with torch.no_grad():
+                pred_norm = model(tensor_in)
 
-        # 5. Вывод
-        st.success(f"Прогнозируемая цена: **{price:,.0f} руб**")
-        
-    except Exception as e:
-        st.error(f"Ошибка при расчете: {e}")
+            # 4. Денормализация
+            price = price_scaler.inverse_transform(pred_norm.numpy().reshape(-1, 1)).item()
+
+            # 5. Вывод
+            st.success(f"Прогнозируемая цена: **{price:,.0f} руб**")
+            
+        except Exception as e:
+            st.error(f"Ошибка при расчете: {e}")
 
 
 # Информация о модели в сайдбар
