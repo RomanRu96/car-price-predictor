@@ -48,7 +48,7 @@ st.caption("Прогноз цены на основе ML-модели (PyTorch)"
 st.sidebar.header("Параметры авто")
 
 # Ввод данных
-mileage = st.sidebar.number_input("Пробег (км)", min_value=0, max_value=500000, value=50000, step=1)
+mileage = st.sidebar.number_input("Пробег (км)", min_value=0, max_value=500000, value=50000, step=1000)
 engine_power = st.sidebar.number_input("Мощность (л.с.)", min_value=50, max_value=500, value=150, step=10)
 year = st.sidebar.number_input("Год выпуска", min_value=2000, max_value=2026, value=2020, step=1)
 brand = st.sidebar.selectbox("Марка", ["Toyota", "BMW", "Mercedes", "Lada"])
