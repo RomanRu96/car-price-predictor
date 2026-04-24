@@ -90,3 +90,7 @@ with st.sidebar:
         - R2 Тест: ~98.7%
         - ! Прогноз на синтетических данных
         """)
+
+# Добавление футера
+st.markdown("---")
+st.caption("Проект создан в рамках обучения ML | [GitHub](https://github.com/RomanRu96)")
