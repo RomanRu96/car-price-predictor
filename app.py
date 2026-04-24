@@ -41,58 +41,74 @@ def load_resources():
 # Загружаем один раз при старте
 model, preprocessor, price_scaler = load_resources()
 
-# --- 2. Интерфейс (UI) ---
+# --- 2. Интерфейс (UI) — мобильная версия ---
 st.title("🚗 Оценка стоимости авто")
 st.caption("Прогноз цены на основе ML-модели (PyTorch)")
 
-st.sidebar.header("Параметры авто")
+# Используем колонки для лучшей организации
+col1, col2 = st.columns([1, 1])
 
-# Ввод данных
-mileage = st.sidebar.number_input("Пробег (км)", min_value=0, max_value=500000, value=50000, step=1000)
-engine_power = st.sidebar.number_input("Мощность (л.с.)", min_value=50, max_value=500, value=150, step=10)
-year = st.sidebar.number_input("Год выпуска", min_value=2000, max_value=2026, value=2020, step=1)
-brand = st.sidebar.selectbox("Марка", ["Toyota", "BMW", "Mercedes", "Lada"])
+with col1:
+    st.subheader("Параметры автомобиля")
+    mileage = st.number_input("📏 Пробег (км)", min_value=0, max_value=500000, value=50000, step=1000)
+    engine_power = st.number_input("⚡ Мощность (л.с.)", min_value=50, max_value=500, value=150, step=10)
 
-if st.button(" Узнать цену"):
-    try:
-        with st.spinner("...Считаем прогноз..."):
-            # 1. Собираем данные как DataFrame (как в predict.py)
-            input_df = pd.DataFrame([{
-                "mileage": mileage,
-                "engine_power": engine_power,
-                "year": year,
-                "brand": brand
-            }])
+with col2:
+    year = st.number_input("📅 Год выпуска", min_value=2000, max_value=2026, value=2020, step=1)
+    brand = st.selectbox("🏷️ Марка", ["Toyota", "BMW", "Mercedes", "Lada"])
 
-            # 2. Препроцессинг
-            processed = preprocessor.transform(input_df)
-            tensor_in = torch.FloatTensor(processed)
+# Кнопка на всю ширину
+st.markdown("<br>", unsafe_allow_html=True)
+col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
+with col_btn2:
+    if st.button("💰 Узнать цену", use_container_width=True, type="primary"):
+        try:
+            with st.spinner("🧮 Считаем прогноз..."):
+                # 1. Собираем данные
+                input_df = pd.DataFrame([{
+                    "mileage": mileage,
+                    "engine_power": engine_power,
+                    "year": year,
+                    "brand": brand
+                }])
 
-            # 3. Предсказание
+                # 2. Препроцессинг
+                processed = preprocessor.transform(input_df)
+                tensor_in = torch.FloatTensor(processed)
+
+                # 3. Предсказание
+                with torch.no_grad():
+                    pred_norm = model(tensor_in)
+
+                # 4. Денормализация
+                price = price_scaler.inverse_transform(pred_norm.numpy().reshape(-1, 1)).item()
+
+            # 5. Вывод (большой и заметный)
+            st.markdown(f"""
+                <div style='background-color: #28a745; padding: 20px; border-radius: 10px; text-align: center; margin: 20px 0;'>
+                    <h2 style='color: white; margin: 0;'>💰 {price:,.0f} руб</h2>
+                    <p style='color: white; margin: 5px 0 0 0;'>Прогнозируемая стоимость</p>
+                </div>
+            """, unsafe_allow_html=True)
             
-            with torch.no_grad():
-                pred_norm = model(tensor_in)
+        except Exception as e:
+            st.error(f"❌ Ошибка при расчете: {e}")
 
-            # 4. Денормализация
-            price = price_scaler.inverse_transform(pred_norm.numpy().reshape(-1, 1)).item()
+# Разделитель
+st.markdown("---")
 
-        # 5. Вывод
-        st.success(f"Прогнозируемая цена: **{price:,.0f} руб**")
-            
-    except Exception as e:
-        st.error(f"Ошибка при расчете: {e}")
-
-
-# Информация о модели в сайдбар
-with st.sidebar:
-    st.info("""
-        **О модели**
-        - Архитектура: MLP, 1 скрытый слой
+# Информация о модели (внизу, а не в сайдбаре)
+with st.expander("ℹ️ О модели"):
+    st.write("""
+        **Технические детали:**
+        - Архитектура: MLP, 1 скрытый слой (16 нейронов)
         - Признаки: пробег, мощность, год, марка 
-        - R2 Тест: ~98.7%
-        - ! Прогноз на синтетических данных
-        """)
+        - R² на тесте: ~98.7%
+        - ⚠️ Прогноз на синтетических данных
+    """)
 
-# Добавление футера
+# Футер
 st.markdown("---")
 st.caption("Проект создан в рамках обучения ML | [GitHub](https://github.com/RomanRu96)")
+
+
