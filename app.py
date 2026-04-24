@@ -77,8 +77,8 @@ if st.button(" Узнать цену"):
             # 4. Денормализация
             price = price_scaler.inverse_transform(pred_norm.numpy().reshape(-1, 1)).item()
 
-            # 5. Вывод
-            st.success(f"Прогнозируемая цена: **{price:,.0f} руб**")
+        # 5. Вывод
+        st.success(f"Прогнозируемая цена: **{price:,.0f} руб**")
             
     except Exception as e:
         st.error(f"Ошибка при расчете: {e}")
