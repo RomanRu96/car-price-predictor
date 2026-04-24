@@ -64,9 +64,9 @@ st.markdown("<br>", unsafe_allow_html=True)
 # Кнопка по центру
 _, btn_col, _ = st.columns([1, 3, 1])
 with btn_col:
-    if st.button("💰 Узнать цену", use_container_width=True, type="primary"):
+    if st.button(" Узнать цену", use_container_width=True, type="primary"):
         try:
-            with st.spinner("🧮 Считаем прогноз..."):
+            with st.spinner(" Считаем прогноз..."):
                 input_df = pd.DataFrame([{
                     "mileage": mileage,
                     "engine_power": engine_power,
@@ -82,7 +82,7 @@ with btn_col:
             # Вывод результата
             st.markdown(f"""
                 <div style='background-color: #28a745; padding: 15px; border-radius: 8px; text-align: center; margin-top: 10px;'>
-                    <h2 style='color: white; margin: 0;'>💰 {price:,.0f} руб</h2>
+                    <h2 style='color: white; margin: 0;'> {price:,.0f} руб</h2>
                     <p style='color: white; margin: 5px 0 0 0;'>Прогнозируемая стоимость</p>
                 </div>
             """, unsafe_allow_html=True)
