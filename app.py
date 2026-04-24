@@ -5,6 +5,14 @@ import torch
 import torch.nn as nn
 import numpy as np
 
+# кастомизация страницы
+
+st.set_page_config(
+    page_title="Car Price Predictor",
+    page_icon="🚗",
+    layout="centered"
+)
+
 # --- 1. Загрузка модели и артефактов ---
 @st.cache_resource
 def load_resources():
