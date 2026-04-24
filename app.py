@@ -1,3 +1,46 @@
+import streamlit as st
+import pandas as pd
+import joblib
+import torch
+import torch.nn as nn
+import numpy as np
+
+# кастомизация страницы
+
+st.set_page_config(
+    page_title="Car Price Predictor",
+    page_icon="🚗",
+    layout="centered"
+)
+
+# --- 1. Загрузка модели и артефактов ---
+@st.cache_resource
+def load_resources():
+    # Твой класс модели
+    class CarPredictor(nn.Module):
+        def __init__(self, input_size):
+            super().__init__()
+            self.net = nn.Sequential(
+                nn.Linear(input_size, 16),
+                nn.ReLU(),
+                nn.Linear(16, 1)
+            )
+        def forward(self, x):
+            return self.net(x)
+
+    # Загружаем веса и препроцессоры
+    model = CarPredictor(input_size=7)
+    model.load_state_dict(torch.load("model.pth", map_location="cpu"))
+    model.eval()
+    
+    preprocessor = joblib.load("preprocessor.joblib")
+    price_scaler = joblib.load("price_scaler.joblib")
+    
+    return model, preprocessor, price_scaler
+
+# Загружаем один раз при старте
+model, preprocessor, price_scaler = load_resources()
+
 # --- 2. Интерфейс (UI) — Адаптивный для ПК и мобильных ---
 st.title("🚗 Оценка стоимости авто")
 st.caption("Прогноз цены на основе ML-модели (PyTorch)")
