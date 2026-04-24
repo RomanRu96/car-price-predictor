@@ -56,8 +56,6 @@ brand = st.sidebar.selectbox("Марка", ["Toyota", "BMW", "Mercedes", "Lada"]
 if st.button(" Узнать цену"):
     try:
         with st.spinner("...Считаем прогноз..."):
-            import time
-            time.sleep(2)
             # 1. Собираем данные как DataFrame (как в predict.py)
             input_df = pd.DataFrame([{
                 "mileage": mileage,
