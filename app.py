@@ -54,9 +54,9 @@ year = st.sidebar.number_input("Год выпуска", min_value=2000, max_valu
 brand = st.sidebar.selectbox("Марка", ["Toyota", "BMW", "Mercedes", "Lada"])
 
 if st.button(" Узнать цену"):
-    with st.spinner("...Считаем прогноз..."):
-
-        try:
+    try:
+        with st.spinner("...Считаем прогноз..."):
+        
             # 1. Собираем данные как DataFrame (как в predict.py)
             input_df = pd.DataFrame([{
                 "mileage": mileage,
@@ -80,8 +80,8 @@ if st.button(" Узнать цену"):
             # 5. Вывод
             st.success(f"Прогнозируемая цена: **{price:,.0f} руб**")
             
-        except Exception as e:
-            st.error(f"Ошибка при расчете: {e}")
+    except Exception as e:
+        st.error(f"Ошибка при расчете: {e}")
 
 
 # Информация о модели в сайдбар
