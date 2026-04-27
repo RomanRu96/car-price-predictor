@@ -62,7 +62,7 @@ with col2:
 st.markdown("<br>", unsafe_allow_html=True)
 
 # Кнопка по центру
-_, btn_col, _ = st.columns([1, 1, 1])
+_, btn_col, _ = st.columns([1, 3, 1])
 with btn_col:
     if st.button(" Узнать цену", use_container_width=True, type="primary"):
         try:
